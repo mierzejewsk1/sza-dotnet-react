@@ -8,6 +8,8 @@ namespace backend.Models
 {
     public class AppUser : IdentityUser
     {
-        
+        public int? MajorId { get; set; } 
+        public Major? Major { get; set; }
+
     }
 }

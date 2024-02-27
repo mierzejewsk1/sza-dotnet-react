@@ -17,5 +17,7 @@ namespace backend.Dtos.Account
         public string? Password { get; set; }
         [Required]
         public string? Role {get; set;}
+        public int? MajorId { get; set; }
+
     }
 }

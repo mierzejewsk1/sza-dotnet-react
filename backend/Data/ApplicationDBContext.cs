@@ -11,6 +11,9 @@ namespace backend.Data
 {
     public class ApplicationDBContext : IdentityDbContext<AppUser>
     {
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Major> Majors { get; set; }
+
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
             
@@ -38,8 +41,38 @@ namespace backend.Data
                     NormalizedName = "CONSERVATOR"
                 }
             };
+
+            List<Department> departments = new List<Department> {
+                new Department 
+                {
+                    DepartmentId = 1,
+                    Name = "WIMiI",
+                },
+                new Department 
+                {
+                    DepartmentId = 2,
+                    Name = "WZ",
+                }
+            };
+
+            List<Major> majors = new List<Major> {
+                new Major 
+                {
+                    MajorId = 1,
+                    Name = "Informatyka",
+                    DepartmentId = 1
+                },
+                new Major 
+                {
+                    MajorId = 2,
+                    Name = "MSiTI",
+                    DepartmentId = 1
+                },
+            };
             
             builder.Entity<IdentityRole>().HasData(roles);
+            builder.Entity<Department>().HasData(departments);
+            builder.Entity<Major>().HasData(majors);
         }
     }
 }

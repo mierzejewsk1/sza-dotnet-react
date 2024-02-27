@@ -61,6 +61,7 @@ namespace backend.Controllers
                 {
                     UserName = registerDto.Username,
                     Email = registerDto.EmailAddress,
+                    MajorId = registerDto.MajorId,
                 
                 };
 
