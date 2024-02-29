@@ -10,6 +10,7 @@ namespace backend.Models
     {
         public int? MajorId { get; set; } 
         public Major? Major { get; set; }
+        public IList<Announcement>? Announcements { get; set;}
 
     }
 }
