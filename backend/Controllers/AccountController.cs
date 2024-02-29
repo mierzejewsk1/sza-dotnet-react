@@ -48,12 +48,14 @@ namespace backend.Controllers
 
             if(!result.Succeeded) return Unauthorized("Username not found and/or inncorrect password");
 
+            var userRoles = await _userManager.GetRolesAsync(user);
+
             return Ok(
                 new NewUserDto
                 {
                     UserName = user.UserName,
                     Email = user.Email,
-                    Token = _tokenService.createToken(user)
+                    Token = _tokenService.createToken(user, userRoles)
                 }
             );            
         }
@@ -75,13 +77,15 @@ namespace backend.Controllers
                 var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password!);
 
                 if(createdUser.Succeeded) {
-                    var roleResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role!);
+                    
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, registerDto.Role);
+                    var userRoles = await _userManager.GetRolesAsync(appUser);
                     if(roleResult.Succeeded) {
                         return Ok(
                             new NewUserDto {
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
-                                Token = _tokenService.createToken(appUser)
+                                Token = _tokenService.createToken(appUser, userRoles)
                             }
                         );
                     }
