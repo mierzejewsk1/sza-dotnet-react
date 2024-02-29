@@ -13,7 +13,7 @@ namespace backend.Data
     {
         public DbSet<Department> Departments { get; set; }
         public DbSet<Major> Majors { get; set; }
-
+        public DbSet<Announcement> Announcements { get; set; }
         public ApplicationDBContext(DbContextOptions dbContextOptions) : base(dbContextOptions)
         {
             
@@ -22,6 +22,12 @@ namespace backend.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<Announcement>()
+            .HasOne<AppUser>(u => u.AppUser)
+            .WithMany(a => a.Announcements)
+            .HasForeignKey(u => u.AppUserId);
+
             
             List<IdentityRole> roles = new List<IdentityRole> {
                 new IdentityRole {

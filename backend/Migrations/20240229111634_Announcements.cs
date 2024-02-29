@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace backend.Migrations
 {
     /// <inheritdoc />
-    public partial class Identity : Migration
+    public partial class Announcements : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,28 +28,16 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "Departments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    DepartmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.PrimaryKey("PK_Departments", x => x.DepartmentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,6 +57,77 @@ namespace backend.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Majors",
+                columns: table => new
+                {
+                    MajorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Majors", x => x.MajorId);
+                    table.ForeignKey(
+                        name: "FK_Majors_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "DepartmentId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AspNetUsers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    MajorId = table.Column<int>(type: "int", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_Majors_MajorId",
+                        column: x => x.MajorId,
+                        principalTable: "Majors",
+                        principalColumn: "MajorId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Announcements",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Descripton = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AppUserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Announcements", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Announcements_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -156,6 +217,40 @@ namespace backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "26c55e95-324e-4c86-a41b-34763dd4b0ee", null, "Inhabitant", "INHABITANT" },
+                    { "56c11309-152a-40b2-a56c-deb52a373693", null, "Administrator", "ADMINISTRATOR" },
+                    { "a3ade3df-2e14-4cbc-82cd-9e4fd56bd860", null, "Recepcionist", "RECEPCIONIST" },
+                    { "e01c3b6c-647b-4be5-9f83-c20fed68d058", null, "Conservator", "CONSERVATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Departments",
+                columns: new[] { "DepartmentId", "Name" },
+                values: new object[,]
+                {
+                    { 1, "WIMiI" },
+                    { 2, "WZ" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Majors",
+                columns: new[] { "MajorId", "DepartmentId", "Name" },
+                values: new object[,]
+                {
+                    { 1, 1, "Informatyka" },
+                    { 2, 1, "MSiTI" }
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Announcements_AppUserId",
+                table: "Announcements",
+                column: "AppUserId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -189,16 +284,29 @@ namespace backend.Migrations
                 column: "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_MajorId",
+                table: "AspNetUsers",
+                column: "MajorId");
+
+            migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 table: "AspNetUsers",
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Majors_DepartmentId",
+                table: "Majors",
+                column: "DepartmentId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Announcements");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -219,6 +327,12 @@ namespace backend.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Majors");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
         }
     }
 }
