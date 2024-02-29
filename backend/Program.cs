@@ -85,6 +85,7 @@ builder.Services.AddAuthentication(options => {
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 
 var app = builder.Build();
 
