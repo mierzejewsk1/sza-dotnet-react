@@ -9,6 +9,7 @@ namespace backend.Interfaces
     public interface IAnnouncementRepository
     {
         Task<List<Announcement>> GetAllAsync();
-        Task<Announcement> CreateAsync(Announcement announcement);
+        Task<Announcement?> CreateAsync(Announcement announcement);
+        Task<Announcement?> GetByIdAsync(int id);
     }
 }

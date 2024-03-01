@@ -13,6 +13,7 @@ namespace backend.Mappers
     {
         public static DisplayAnnouncementDto ToAnnouncementDto(this Announcement announcement, string username) {
             return new DisplayAnnouncementDto {
+                Id = announcement.Id,
                 Subject = announcement.Subject,
                 Descripton = announcement.Descripton,
                 AppUserId = announcement.AppUserId,

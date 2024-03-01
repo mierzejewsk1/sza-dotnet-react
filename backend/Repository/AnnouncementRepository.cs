@@ -18,7 +18,7 @@ namespace backend.Repository
             _context = context;
         }
 
-        public async Task<Announcement> CreateAsync(Announcement announcementModel)
+        public async Task<Announcement?> CreateAsync(Announcement announcementModel)
         {
             await _context.Announcements.AddAsync(announcementModel);
             await _context.SaveChangesAsync();
@@ -28,6 +28,11 @@ namespace backend.Repository
         public async Task<List<Announcement>> GetAllAsync()
         {
             return await _context.Announcements.ToListAsync();
+        }
+
+        public async Task<Announcement?> GetByIdAsync(int id)
+        {
+            return await _context.Announcements.FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }

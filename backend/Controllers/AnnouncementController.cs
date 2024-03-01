@@ -58,11 +58,25 @@ namespace backend.Controllers
             var announcementModel = announcementDto.ToAnnouncementFromAnnounementDto(appUser.Id);
 
             await _announcementRepo.CreateAsync(announcementModel);
-
-            return Ok("Announcment addedd successfully");
-            //return CreatedAtAction(nameof(GetById), new {id = announcementModel.Id}, announcementModel.ToAnnouncementDto());
+        
+            return CreatedAtAction(nameof(GetById), new {id = announcementModel.Id}, announcementModel.ToAnnouncementDto(username!));
         }
 
 
+        [HttpGet("announcement/{id}")]
+        [Authorize(Roles = "Inhabitant")]
+        public async Task<IActionResult> GetById([FromRoute] int id) {
+            if(!ModelState.IsValid) 
+                return BadRequest(ModelState);
+            
+            var announcementModel = await _announcementRepo.GetByIdAsync(id);
+
+            if(announcementModel == null) 
+                return NotFound();
+
+            var username = _userManager?.Users?.FirstOrDefault(u => u.Id == announcementModel.AppUserId)!.UserName!; 
+
+            return Ok(announcementModel.ToAnnouncementDto(username));
+        }
     }
 }
