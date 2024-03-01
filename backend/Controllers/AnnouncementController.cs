@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.EntityFrameworkCore.Update.Internal;
 
 namespace backend.Controllers
 {
@@ -36,15 +37,15 @@ namespace backend.Controllers
             if(announcements == null) 
                 return NotFound("There is no objects");
             
-            var announcementDto = announcements.Select(a => a.ToAnnouncementDto(_userManager?.Users?.FirstOrDefault(u => u.Id == a.AppUserId)!.UserName!));
+            var announcementDto = announcements.Select(a => a.ToAnnouncementDto());
         
             return Ok(announcementDto);
         }  
         
        
         [HttpPost("announcement")]
-        [Authorize(Roles = "Inhabitant")]
-        public async Task<IActionResult> AddAnnouncement([FromBody] AddAnnouncementDto announcementDto) {
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Create([FromBody] AddAnnouncementDto announcementDto) {
             if(!ModelState.IsValid)
                 return BadRequest(ModelState);
 
@@ -59,12 +60,12 @@ namespace backend.Controllers
 
             await _announcementRepo.CreateAsync(announcementModel);
         
-            return CreatedAtAction(nameof(GetById), new {id = announcementModel.Id}, announcementModel.ToAnnouncementDto(username!));
+            return CreatedAtAction(nameof(GetById), new {id = announcementModel.Id}, announcementModel.ToAnnouncementDto());
         }
 
 
         [HttpGet("announcement/{id}")]
-        [Authorize(Roles = "Inhabitant")]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetById([FromRoute] int id) {
             if(!ModelState.IsValid) 
                 return BadRequest(ModelState);
@@ -74,9 +75,18 @@ namespace backend.Controllers
             if(announcementModel == null) 
                 return NotFound();
 
-            var username = _userManager?.Users?.FirstOrDefault(u => u.Id == announcementModel.AppUserId)!.UserName!; 
+            return Ok(announcementModel.ToAnnouncementDto());
+        }
 
-            return Ok(announcementModel.ToAnnouncementDto(username));
+        [HttpDelete("announcement/{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Delete([FromRoute] int id) {
+            if(!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            await _announcementRepo.DeleteAsync(id);
+
+            return Ok();
         }
     }
 }

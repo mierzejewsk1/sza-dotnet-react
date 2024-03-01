@@ -11,13 +11,13 @@ namespace backend.Mappers
 {
     public static class AnnouncementMapper
     {
-        public static DisplayAnnouncementDto ToAnnouncementDto(this Announcement announcement, string username) {
+        public static DisplayAnnouncementDto ToAnnouncementDto(this Announcement announcement) {
             return new DisplayAnnouncementDto {
                 Id = announcement.Id,
                 Subject = announcement.Subject,
                 Descripton = announcement.Descripton,
                 AppUserId = announcement.AppUserId,
-                AppUsername = username
+                AppUsername = announcement?.AppUser?.UserName,
             };
         }
 

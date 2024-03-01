@@ -11,5 +11,6 @@ namespace backend.Interfaces
         Task<List<Announcement>> GetAllAsync();
         Task<Announcement?> CreateAsync(Announcement announcement);
         Task<Announcement?> GetByIdAsync(int id);
+        Task<Announcement?> DeleteAsync(int id);
     }
 }

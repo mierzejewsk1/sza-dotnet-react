@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using backend.Data;
 using backend.Interfaces;
 using backend.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace backend.Repository
 {
@@ -25,14 +27,27 @@ namespace backend.Repository
             return announcementModel;
         }
 
+        public async Task<Announcement?> DeleteAsync(int id)
+        {
+            var announcement = await _context.Announcements.FirstOrDefaultAsync(a => a.Id == id);
+            if(announcement == null)
+                return null;
+                       
+            _context.Announcements.Remove(announcement);
+
+            await _context.SaveChangesAsync();
+
+            return announcement;
+        }
+
         public async Task<List<Announcement>> GetAllAsync()
         {
-            return await _context.Announcements.ToListAsync();
+            return await _context.Announcements.Include(x => x.AppUser).ToListAsync();
         }
 
         public async Task<Announcement?> GetByIdAsync(int id)
         {
-            return await _context.Announcements.FirstOrDefaultAsync(a => a.Id == id);
+            return await _context.Announcements.Include(x => x.AppUser).FirstOrDefaultAsync(a => a.Id == id);
         }
     }
 }
