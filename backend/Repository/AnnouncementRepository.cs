@@ -49,5 +49,20 @@ namespace backend.Repository
         {
             return await _context.Announcements.Include(x => x.AppUser).FirstOrDefaultAsync(a => a.Id == id);
         }
+
+        public async Task<Announcement?> UpdateAsync(int id, Announcement announcementModel) 
+        {
+            var announcement = await _context.Announcements.Include(x => x.AppUser).FirstOrDefaultAsync(a => a.Id == id);
+            if(announcement == null) 
+                return null;
+
+            announcement.Subject = announcementModel.Subject;
+            announcement.Descripton = announcementModel.Descripton;
+            announcement.CreatedOn = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return announcement;
+        }
+
     }
 }

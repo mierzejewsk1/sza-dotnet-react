@@ -12,5 +12,6 @@ namespace backend.Interfaces
         Task<Announcement?> CreateAsync(Announcement announcement);
         Task<Announcement?> GetByIdAsync(int id);
         Task<Announcement?> DeleteAsync(int id);
+        Task<Announcement?> UpdateAsync(int id, Announcement announcementModel);
     }
 }

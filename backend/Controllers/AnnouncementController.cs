@@ -71,7 +71,7 @@ namespace backend.Controllers
                 return BadRequest(ModelState);
             
             var announcementModel = await _announcementRepo.GetByIdAsync(id);
-
+          
             if(announcementModel == null) 
                 return NotFound();
 
@@ -88,5 +88,22 @@ namespace backend.Controllers
 
             return Ok();
         }
+
+        [HttpPatch("announcement/{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Update([FromRoute] int id, UpdateAnnouncementDto announcementDto) {
+            if(!ModelState.IsValid) 
+                return BadRequest(ModelState);
+            
+            var announcement =  await _announcementRepo.UpdateAsync(id, announcementDto.ToAnnouncementFromUpdate());
+
+            if(announcement == null) 
+                return NotFound("Announcement not found");
+
+            return Ok(announcement.ToAnnouncementDto());
+        }
+
+
+        // get by user id
     }
 }

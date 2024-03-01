@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using backend.Models;
 using backend.Dtos.Announcement;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 
 
 namespace backend.Mappers
@@ -29,6 +30,15 @@ namespace backend.Mappers
                 AppUserId = AppUserId,
                 CreatedOn = DateTime.Now,
 
+            };
+        }
+
+        public static Announcement ToAnnouncementFromUpdate(this UpdateAnnouncementDto announcementDto) {
+            
+            return new Announcement 
+            {
+                Subject = announcementDto.Subject,
+                Descripton = announcementDto.Descripton,
             };
         }
     }
