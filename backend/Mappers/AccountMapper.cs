@@ -19,7 +19,7 @@ namespace backend.Mappers
             };
         }
 
-          public static UserInfoDto ToUserInfoDto(this AppUser appUser) {
+        public static UserInfoDto ToUserInfoDto(this AppUser appUser) {
             return new UserInfoDto
             {
                 UserName = appUser.UserName,

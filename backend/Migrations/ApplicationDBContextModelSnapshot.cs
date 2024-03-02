@@ -51,25 +51,25 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5d53e11a-229a-478a-a403-e84c09b36831",
+                            Id = "a301b006-c8a4-45e4-a789-e13ffa3dba65",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "6fc9dcfc-ab6e-4971-a2fa-c5930a490d12",
+                            Id = "46e70be8-f0b4-478b-beb2-978b7497e197",
                             Name = "Recepcionist",
                             NormalizedName = "RECEPCIONIST"
                         },
                         new
                         {
-                            Id = "ec4a6a8d-72e4-45e7-b86c-6d0108a757d6",
+                            Id = "6475e60b-2a53-45f0-94ba-bd7ebeb086e5",
                             Name = "Inhabitant",
                             NormalizedName = "INHABITANT"
                         },
                         new
                         {
-                            Id = "6321b158-1c61-4043-ba3e-092ab9d8c198",
+                            Id = "305edcc5-41cd-4634-910e-6efac1fdfb18",
                             Name = "Conservator",
                             NormalizedName = "CONSERVATOR"
                         });
@@ -181,6 +181,36 @@ namespace backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.Announcement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descripton")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Announcements");
+                });
+
             modelBuilder.Entity("backend.Models.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -288,7 +318,7 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MajorId"));
 
-                    b.Property<int?>("DepartmentId")
+                    b.Property<int>("DepartmentId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -367,6 +397,17 @@ namespace backend.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("backend.Models.Announcement", b =>
+                {
+                    b.HasOne("backend.Models.AppUser", "AppUser")
+                        .WithMany("Announcements")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
             modelBuilder.Entity("backend.Models.AppUser", b =>
                 {
                     b.HasOne("backend.Models.Major", "Major")
@@ -380,9 +421,16 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Models.Department", "Department")
                         .WithMany()
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("backend.Models.AppUser", b =>
+                {
+                    b.Navigation("Announcements");
                 });
 #pragma warning restore 612, 618
         }

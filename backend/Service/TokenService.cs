@@ -21,11 +21,18 @@ namespace backend.Service
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
         }
 
-        public string createToken(AppUser user) {
+        public string createToken(AppUser user, IList<string> userRoles) {
+            
             var claims = new List<Claim> {
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.GivenName, user.UserName!),
+                
             };
+
+            foreach (var userRole in userRoles)
+            {
+              claims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
 
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
 

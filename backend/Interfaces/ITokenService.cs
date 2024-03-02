@@ -8,6 +8,6 @@ namespace backend.Interfaces
 {
     public interface ITokenService
     {
-        string createToken(AppUser user);
+        string createToken(AppUser user, IList<string> userRoles);
     }
 }

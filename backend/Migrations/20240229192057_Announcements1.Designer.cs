@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20240225142318_SeedRole")]
-    partial class SeedRole
+    [Migration("20240229192057_Announcements1")]
+    partial class Announcements1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,25 +54,25 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "151a84a5-89df-4c7c-825d-5d7972bb5458",
+                            Id = "a301b006-c8a4-45e4-a789-e13ffa3dba65",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "72ba6a96-1318-4090-8807-3e6e6e52cf10",
+                            Id = "46e70be8-f0b4-478b-beb2-978b7497e197",
                             Name = "Recepcionist",
                             NormalizedName = "RECEPCIONIST"
                         },
                         new
                         {
-                            Id = "e0ff74cd-fdfc-4444-96eb-9e33d16d4222",
+                            Id = "6475e60b-2a53-45f0-94ba-bd7ebeb086e5",
                             Name = "Inhabitant",
                             NormalizedName = "INHABITANT"
                         },
                         new
                         {
-                            Id = "2ab2fdfe-c853-4201-8578-ec690c3315bc",
+                            Id = "305edcc5-41cd-4634-910e-6efac1fdfb18",
                             Name = "Conservator",
                             NormalizedName = "CONSERVATOR"
                         });
@@ -184,6 +184,36 @@ namespace backend.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Models.Announcement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AppUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descripton")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("Announcements");
+                });
+
             modelBuilder.Entity("backend.Models.AppUser", b =>
                 {
                     b.Property<string>("Id")
@@ -208,6 +238,9 @@ namespace backend.Migrations
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("MajorId")
+                        .HasColumnType("int");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -238,6 +271,8 @@ namespace backend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MajorId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -247,6 +282,71 @@ namespace backend.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+                });
+
+            modelBuilder.Entity("backend.Models.Department", b =>
+                {
+                    b.Property<int>("DepartmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DepartmentId"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("DepartmentId");
+
+                    b.ToTable("Departments");
+
+                    b.HasData(
+                        new
+                        {
+                            DepartmentId = 1,
+                            Name = "WIMiI"
+                        },
+                        new
+                        {
+                            DepartmentId = 2,
+                            Name = "WZ"
+                        });
+                });
+
+            modelBuilder.Entity("backend.Models.Major", b =>
+                {
+                    b.Property<int>("MajorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MajorId"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MajorId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Majors");
+
+                    b.HasData(
+                        new
+                        {
+                            MajorId = 1,
+                            DepartmentId = 1,
+                            Name = "Informatyka"
+                        },
+                        new
+                        {
+                            MajorId = 2,
+                            DepartmentId = 1,
+                            Name = "MSiTI"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -298,6 +398,42 @@ namespace backend.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Models.Announcement", b =>
+                {
+                    b.HasOne("backend.Models.AppUser", "AppUser")
+                        .WithMany("Announcements")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("backend.Models.AppUser", b =>
+                {
+                    b.HasOne("backend.Models.Major", "Major")
+                        .WithMany()
+                        .HasForeignKey("MajorId");
+
+                    b.Navigation("Major");
+                });
+
+            modelBuilder.Entity("backend.Models.Major", b =>
+                {
+                    b.HasOne("backend.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("backend.Models.AppUser", b =>
+                {
+                    b.Navigation("Announcements");
                 });
 #pragma warning restore 612, 618
         }

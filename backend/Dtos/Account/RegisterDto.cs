@@ -16,7 +16,7 @@ namespace backend.Dtos.Account
         [Required]
         public string? Password { get; set; }
         [Required]
-        public string? Role {get; set;}
+        public string Role {get; set;} = "Inhabitant";
         public int? MajorId { get; set; }
 
     }
