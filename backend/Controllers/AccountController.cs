@@ -34,7 +34,6 @@ namespace backend.Controllers
             _accountRepo = accountRepo;
         }
 
-
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto) {
             if(!ModelState.IsValid)

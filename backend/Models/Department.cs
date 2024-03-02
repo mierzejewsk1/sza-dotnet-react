@@ -9,6 +9,5 @@ namespace backend.Models
     {
         public int DepartmentId { get; set; }
         public string Name { get; set; } = string.Empty;
-
     }
 }

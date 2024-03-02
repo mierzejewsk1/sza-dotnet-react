@@ -22,14 +22,12 @@ namespace backend.Mappers
             };
         }
 
-        public static Announcement ToAnnouncementFromAnnounementDto(this AddAnnouncementDto announcementDto, string AppUserId) {
+        public static Announcement ToAnnouncementFromAnnounementDto(this AddAnnouncementDto announcementDto) {
             return new Announcement
             {
                 Subject = announcementDto.Subject,
                 Descripton = announcementDto.Descripton,
-                AppUserId = AppUserId,
                 CreatedOn = DateTime.Now,
-
             };
         }
 
@@ -37,8 +35,8 @@ namespace backend.Mappers
             
             return new Announcement 
             {
-                Subject = announcementDto.Subject,
-                Descripton = announcementDto.Descripton,
+                Subject = announcementDto.Subject!,
+                Descripton = announcementDto.Descripton!,
             };
         }
     }

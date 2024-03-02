@@ -14,7 +14,6 @@ namespace backend.Repository
     {
         private readonly ApplicationDBContext _context;
        
-
         public AccountRepository(ApplicationDBContext context)
         {
             _context = context;

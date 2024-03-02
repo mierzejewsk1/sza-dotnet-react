@@ -56,7 +56,8 @@ namespace backend.Controllers
             if(appUser == null)
                 return BadRequest("Cant find user with this id");
 
-            var announcementModel = announcementDto.ToAnnouncementFromAnnounementDto(appUser.Id);
+            var announcementModel = announcementDto.ToAnnouncementFromAnnounementDto();
+            announcementModel.AppUserId = appUser.Id;
 
             await _announcementRepo.CreateAsync(announcementModel);
         
