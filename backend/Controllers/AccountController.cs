@@ -14,6 +14,7 @@ using Microsoft.Identity.Client;
 using backend.Mappers;
 using backend.Data;
 using backend.Repository;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -52,9 +53,12 @@ namespace backend.Controllers
             return Ok(
                 new NewUserDto
                 {
+                    Id = user.Id,
                     UserName = user.UserName,
                     Email = user.Email,
-                    Token = _tokenService.createToken(user, userRoles)
+                    Token = _tokenService.createToken(user, userRoles),
+                    Role = userRoles[0]
+                    
                 }
             );            
         }
@@ -82,9 +86,11 @@ namespace backend.Controllers
                     if(roleResult.Succeeded) {
                         return Ok(
                             new NewUserDto {
+                                Id = appUser.Id,
                                 UserName = appUser.UserName,
                                 Email = appUser.Email,
-                                Token = _tokenService.createToken(appUser, userRoles)
+                                Token = _tokenService.createToken(appUser, userRoles),
+                                Role = userRoles[0]
                             }
                         );
                     }
@@ -102,6 +108,7 @@ namespace backend.Controllers
             }
         }
 
+        [Authorize(Roles = "Inhabitant")]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserInfo([FromRoute] string id) {
             if(!ModelState.IsValid) {
